@@ -1,18 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
-#include <netinet/tcp.h> // Add this line to include the tcp header file
-#include <netinet/udp.h>
+#include <netinet/tcp.h>
 #include <arpa/inet.h>
 
 
 void process_packet(unsigned char* buffer, int size);
+void ip_packet_info(unsigned char* buffer, int size);
+void tcp_packet_info(unsigned char* buffer, int size);
 
-int total, main_socket;
+int total, tcp, udp, icmp, others, igmp, arp, rarp, ip, main_socket;
 
 int main() {
     main_socket = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
@@ -56,12 +56,21 @@ void process_packet(unsigned char* buffor, int size) {
 
 }
 
+void ip_packet_info(unsigned char* buffer, int size) {
+    struct iphdr* ip_header = (struct iphdr*)buffer;
+    struct sockaddr_in source, dest;
+
+    source.sin_addr.s_addr = ip_header->saddr;
+    dest.sin_addr.s_addr = ip_header->daddr;
+
+    printf("Source IP: %s\n", inet_ntoa(source.sin_addr));
+    printf("Destination IP: %s\n", inet_ntoa(dest.sin_addr));
+}
+
 void tcp_packet_info(unsigned char* buffer, int size) {
     struct iphdr* ip_header = (struct iphdr*)buffer;
     struct tcphdr* tcp_header = (struct tcphdr*)(buffer + ip_header->ihl*4);
 
-    //Print IP info
-
-    printf("Source port: %d\n", ntohs(tcp_header->source));
-    printf("Destination port: %d\n", ntohs(tcp_header->dest));
+    printf("Source port: %d\n", ntohs(tcp_header->th_sport));
+    printf("Destination port: %d\n", ntohs(tcp_header->th_dport));
 }
