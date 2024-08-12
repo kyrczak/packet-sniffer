@@ -34,7 +34,6 @@ int main() {
             perror("recv error, failed to get packets\n");
             return 1;
         }
-		printf("Received %d bytes\n", recv_bytes);
         process_packet(buffer, recv_bytes);
 
     }
@@ -52,7 +51,6 @@ void process_packet(unsigned char* buffor, int size) {
     switch(ip_header->protocol) {
         case 6:
             ++tcp;
-            printf("TCP\n");
 			tcp_packet_info(buffor, size);
             break;
         case 17:
@@ -65,19 +63,38 @@ void process_packet(unsigned char* buffor, int size) {
 }
 
 void ip_packet_info(unsigned char* buffer, int size) {
-    struct iphdr* ip_header = (struct iphdr*)buffer;
+    unsigned short ip_header_length;
     struct sockaddr_in source, dest;
+    struct iphdr* ip_header = (struct iphdr*)buffer;
+    
+    ip_header_length = ip_header->ihl*4;
 
+    memset(&source, 0, sizeof(source));
     source.sin_addr.s_addr = ip_header->saddr;
+    memset(&dest, 0, sizeof(dest));
     dest.sin_addr.s_addr = ip_header->daddr;
+
+    printf("\t IP HEADER\n");
 
     printf("Source IP: %s\n", inet_ntoa(source.sin_addr));
     printf("Destination IP: %s\n", inet_ntoa(dest.sin_addr));
+    printf("Version: %d\n", ip_header->version);
+    printf("Header length: %d\n", ip_header->ihl);
+    printf("Type of service: %d\n", ip_header->tos);
+    printf("Total length: %d\n", ntohs(ip_header->tot_len));
+    printf("Identification: %d\n", ntohs(ip_header->id));
+    printf("Fragment offset: %d\n", ntohs(ip_header->frag_off));
+    printf("Time to live: %d\n", ip_header->ttl);
+    printf("Protocol: %d\n", ip_header->protocol);
 }
 
 void tcp_packet_info(unsigned char* buffer, int size) {
     struct iphdr* ip_header = (struct iphdr*)buffer;
     struct tcphdr* tcp_header = (struct tcphdr*)(buffer + ip_header->ihl*4);
+
+    ip_packet_info(buffer, size);
+
+    printf("\t TCP HEADER\n");
 
     printf("Source port: %d\n", ntohs(tcp_header->th_sport));
     printf("Destination port: %d\n", ntohs(tcp_header->th_dport));
