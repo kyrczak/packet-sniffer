@@ -15,7 +15,8 @@ void tcp_packet_info(unsigned char* buffer, int size);
 
 int total, tcp, udp, icmp, others, igmp, arp, rarp, ip, main_socket, saddr_size;
 
-int main() {
+int main(int argc, char* argv[]) {
+    total = tcp = udp = icmp = others = igmp = arp = rarp = ip = 0;
     main_socket = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
     if(main_socket < 0) {
         perror("socket");
@@ -25,7 +26,6 @@ int main() {
 
     unsigned char* buffer = (unsigned char*)malloc(65536);
     struct sockaddr saddr;
-    struct in_addr in;
     
     while(1) {
         saddr_size = sizeof saddr;
@@ -63,12 +63,9 @@ void process_packet(unsigned char* buffor, int size) {
 }
 
 void ip_packet_info(unsigned char* buffer, int size) {
-    unsigned short ip_header_length;
     struct sockaddr_in source, dest;
     struct iphdr* ip_header = (struct iphdr*)buffer;
     
-    ip_header_length = ip_header->ihl*4;
-
     memset(&source, 0, sizeof(source));
     source.sin_addr.s_addr = ip_header->saddr;
     memset(&dest, 0, sizeof(dest));
@@ -89,8 +86,10 @@ void ip_packet_info(unsigned char* buffer, int size) {
 }
 
 void tcp_packet_info(unsigned char* buffer, int size) {
+    unsigned short ip_header_length;
     struct iphdr* ip_header = (struct iphdr*)buffer;
-    struct tcphdr* tcp_header = (struct tcphdr*)(buffer + ip_header->ihl*4);
+    ip_header_length = ip_header->ihl*4;
+    struct tcphdr* tcp_header = (struct tcphdr*)(buffer + ip_header_length);
 
     ip_packet_info(buffer, size);
 
