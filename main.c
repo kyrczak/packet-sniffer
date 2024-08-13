@@ -16,7 +16,7 @@
 int main_socket, saddr_size;
 
 int main(int argc, char* argv[]) {
-    sniffer_stats* statistics = calloc(1, sizeof(sniffer_stats));
+    sniffer_stats *statistics = calloc(1, sizeof(sniffer_stats));
     main_socket = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
     if(main_socket < 0) {
         perror("socket");
@@ -34,11 +34,12 @@ int main(int argc, char* argv[]) {
             perror("recv error, failed to get packets\n");
             return 1;
         }
-        process_packet(statistics,buffer, recv_bytes);
+        process_packet(statistics, buffer, recv_bytes);
 
     }
 
     free(statistics);
+    free(buffer);
     close(main_socket);
     printf("Socket closed\n");
     return 0;

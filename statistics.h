@@ -1,4 +1,7 @@
-typedef struct sniffer_stats {
+#ifndef STATISTICS_H
+#define STATISTICS_H
+
+typedef struct statistics {
     unsigned int total;
     unsigned int tcp;
     unsigned int udp;
@@ -9,3 +12,5 @@ typedef struct sniffer_stats {
     unsigned int rarp;
     unsigned int ip;
 } sniffer_stats;
+
+#endif

@@ -1,10 +1,10 @@
-build: main.c
+build: main.c display.c
 	echo "Building project..."
-	gcc -Wall -o main.out main.c
+	gcc -Wall -o main.out main.c display.c
 
-debug: main.c
+debug: main.c display.c
 	echo "Building debug version..."
-	gcc -Wall -g -o debug.out main.c
+	gcc -Wall -g -o debug.out main.c display.c
 
 clean:
 	rm -f *.out
