@@ -66,4 +66,47 @@ void tcp_packet_info(unsigned char* buffer, int size) {
     printf("\t RST:%d\n", tcp_header->rst);
     printf("\t SYN:%d\n", tcp_header->syn);
     printf("\t FIN:%d\n", tcp_header->fin);
+
+    printf("IP HEADER \n");
+    print_data(buffer, ip_header_length);
+
+    printf("TCP HEADER \n");
+    print_data(buffer + ip_header_length, tcp_header->doff*4);
+
+    printf("DATA \n");
+    print_data(buffer + ip_header_length + tcp_header->doff*4, size - tcp_header->doff*4 - ip_header_length);
+}
+
+void print_data(unsigned char* buffer, int size) {
+    for(int i = 0; i < size; i++) {
+        if(i != 0 && i % 16 == 0) {
+            printf("\t");
+            for(int j = i - 16; j < i; j++) {
+                if(buffer[j] >= 32 && buffer[j] <= 128) {
+                    printf("%c", (unsigned char)buffer[j]);
+                } else {
+                    printf(".");
+                }
+            }
+            printf("\n");
+        }
+        if(i % 16 == 0) {
+            printf("\t");
+        }
+        printf(" %02x", (unsigned int)buffer[i]);
+        if(i == size - 1) {
+            for(int j = 0; j < 15 - i % 16; j++) {
+                printf("   ");
+            }
+            printf("\t");
+            for(int j = i - i % 16; j <= i; j++) {
+                if(buffer[j] >= 32 && buffer[j] <= 128) {
+                    printf("%c", (unsigned char)buffer[j]);
+                } else {
+                    printf(".");
+                }
+            }
+            printf("\n");
+        }
+    }
 }
