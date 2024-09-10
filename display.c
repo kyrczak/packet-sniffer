@@ -10,6 +10,7 @@ void process_packet(sniffer_stats* stats, unsigned char* buffor, int size) {
 			tcp_packet_info(buffor, size);
             break;
         case 17:
+            ++(stats->udp);
             printf("UDP\n");
             break;
         default:
