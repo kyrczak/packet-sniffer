@@ -11,7 +11,7 @@ void process_packet(sniffer_stats* stats, unsigned char* buffor, int size) {
             break;
         case 17:
             ++(stats->udp);
-            printf("UDP\n");
+            udp_packet_info(buffor, size);
             break;
         default:
             break;
@@ -40,6 +40,31 @@ void ip_packet_info(unsigned char* buffer, int size) {
     printf("Fragment offset: %d\n", ntohs(ip_header->frag_off));
     printf("Time to live: %d\n", ip_header->ttl);
     printf("Protocol: %d\n", ip_header->protocol);
+}
+
+void udp_packet_info(unsigned char* buffer, int size) {
+    struct iphdr* ip_header = (struct iphdr*)buffer;
+    unsigned short ip_header_length;
+    ip_header_length = ip_header->ihl*4;
+    struct udphdr* udp_header = (struct udphdr*)(buffer + ip_header_length);
+
+    ip_packet_info(buffer, size);
+
+    printf("\t UDP HEADER\n");
+
+    printf("Source port: %d\n", ntohs(udp_header->source));
+    printf("Destination port: %d\n", ntohs(udp_header->dest));
+    printf("Length: %d\n", ntohs(udp_header->len));
+    printf("Checksum: %d\n", ntohs(udp_header->check));
+
+    printf("IP HEADER \n");
+    print_data(buffer, ip_header_length);
+
+    printf("UDP HEADER \n");
+    print_data(buffer + ip_header_length, sizeof(struct udphdr));
+
+    printf("DATA \n");
+    print_data(buffer + ip_header_length + sizeof(struct udphdr), size - sizeof(struct udphdr) - ip_header_length);   
 }
 
 void tcp_packet_info(unsigned char* buffer, int size) {
