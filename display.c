@@ -16,7 +16,7 @@ void process_packet(sniffer_stats* stats, unsigned char* buffor, int size) {
         default:
             break;
     }
-    printf("Total: %d, TCP: %d, UDP: %d, OTHER: %d", stats->total, stats->tcp, stats->udp, stats->others);
+    printf("Total: %d, TCP: %d, UDP: %d, OTHER: %d \n\n\n", stats->total, stats->tcp, stats->udp, stats->others);
 }
 
 void ip_packet_info(unsigned char* buffer, int size) {
