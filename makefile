@@ -4,7 +4,7 @@ build: main.c display.c
 
 debug: main.c display.c
 	echo "Building debug version..."
-	gcc -Wall -g -o debug.out main.c display.c
+	gcc -Wall -Wextra -Wconversion -g -o debug.out main.c display.c
 
 clean:
 	rm -f *.out

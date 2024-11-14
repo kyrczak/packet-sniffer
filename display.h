@@ -14,10 +14,15 @@
 
 #include "statistics.h"
 
-void process_packet(sniffer_stats* stats, unsigned char* buffer, int size);
-void ip_packet_info(unsigned char* buffer, int size);
-void udp_packet_info(unsigned char* buffer, int size);
-void tcp_packet_info(unsigned char* buffer, int size);
-void print_data(unsigned char* buffer, int size);
+enum STREAM_TYPE {
+    OUTPUT_FILE,
+    OUTPUT_STREAM
+};
+
+void process_packet(sniffer_stats* stats, FILE* stream, unsigned char* buffer, int size);
+void ip_packet_info(FILE* stream, unsigned char* buffer, int size);
+void udp_packet_info(FILE* stream, unsigned char* buffer, int size);
+void tcp_packet_info(FILE* stream, unsigned char* buffer, int size);
+void print_data(FILE* stream, unsigned char* buffer, int size);
 
 #endif
